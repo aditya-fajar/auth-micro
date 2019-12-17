@@ -16,6 +16,7 @@ func main() {
 	//r.POST("/products", product.CreateProduct)
 
 	//r.GET("/test", func)
+	//Menu Login (AgungW)
 	r.POST("/login", login.LoginUser)
 
 	r.POST("/register", func(c *gin.Context) {
