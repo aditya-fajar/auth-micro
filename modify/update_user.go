@@ -1,4 +1,4 @@
-package auth
+package modify
 
 import (
 	"github.com/gin-gonic/gin"
@@ -10,18 +10,28 @@ type User struct {
 	DB *gorm.DB
 }
 
+//Test
+
 type user struct {
+	Id       int32  `json:"id"`
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-// func New(db *gorm.DB) User {
-// 	return User{DB: db}
-// }
+func (u *User) GetUsers(c *gin.Context) {
+	db := u.DB
+	var user []model.User
 
-func (u *User) Register(c *gin.Context) {
-	var request model.User
+	db.Find(&user)
+
+	c.JSON(200, gin.H{
+		"data": user,
+	})
+}
+
+func (u *User) UpdateUser(c *gin.Context) {
+	var request user
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(500, gin.H{
@@ -31,8 +41,7 @@ func (u *User) Register(c *gin.Context) {
 	}
 
 	u.DB.Create(&request)
-	// fmt.Println(request)
 	c.JSON(200, gin.H{
-		"message": request,
+		"message": "success",
 	})
 }
