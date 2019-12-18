@@ -33,6 +33,10 @@ func (u *User) GetUsers(c *gin.Context) {
 func (u *User) UpdateUser(c *gin.Context) {
 	var request user
 
+	id := c.Param("id")
+
+	var user model.User
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -40,8 +44,15 @@ func (u *User) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	u.DB.Create(&request)
+	u.DB.Where("id = ?", id).Find(&user)
+
+	user.Name = request.Name
+	user.Email = request.Email
+
+	u.DB.Save(&user)
+
 	c.JSON(200, gin.H{
 		"message": "success",
+		"user":    user,
 	})
 }

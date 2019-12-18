@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/pfpmaniac123/auth-micro/auth"
 	"github.com/pfpmaniac123/auth-micro/config"
 	"github.com/pfpmaniac123/auth-micro/modify"
-	"github.com/pfpmaniac123/auth-micro/auth"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 
 	r.POST("/register", register.Register)
 
-	r.PATCH("/update", update.GetUsers)
+	r.PATCH("/update/:id", update.UpdateUser)
 
 	r.Run()
 }

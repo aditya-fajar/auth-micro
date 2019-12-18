@@ -15,18 +15,19 @@ type Login struct {
 }
 
 type LoginBody struct {
-	Username string `json:"username"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type MyClaims struct {
 	jwt.StandardClaims
-	Name  string `json:"username"`
+	Name  string `json:"name"`
 	Email string `json:"email"`
 }
 
 var APPLICATION_NAME = "Auth-Micro"
-var LOGIN_EXPIRATION_DURATION = time.Duration(1) * time.Hour
+
+// var LOGIN_EXPIRATION_DURATION = time.Duration(1) * time.Day
 var JWT_SIGNING_METHOD = jwt.SigningMethodHS256
 var JWT_SIGNATURE_KEY = []byte("auth-micro123")
 
@@ -37,6 +38,7 @@ func New(DB *gorm.DB) Login {
 func (l Login) LoginUser(c *gin.Context) {
 	var request LoginBody
 	var user model.User
+	var accessToken model.AccessToken
 
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(500, gin.H{
@@ -45,13 +47,14 @@ func (l Login) LoginUser(c *gin.Context) {
 		return
 	}
 
-	l.DB.Where("name = ? AND password = ?", request.Username, request.Password).Find(&user)
+	l.DB.Where("email = ? AND password = ?", request.Email, request.Password).Find(&user)
 	//// SELECT * FROM users WHERE name = 'jinzhu' limit 1;
+	expired := time.Now().Add(time.Hour * 48)
 
 	claims := MyClaims{
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    APPLICATION_NAME,
-			ExpiresAt: time.Now().Add(LOGIN_EXPIRATION_DURATION).Unix(),
+			ExpiresAt: expired.Unix(),
 		},
 		Name:  user.Name,
 		Email: user.Email,
@@ -68,10 +71,15 @@ func (l Login) LoginUser(c *gin.Context) {
 		return
 	}
 
-	//p.DB.Create(&request)
+	accessToken.Token = signedToken
+	accessToken.UserID = user.ID
+	accessToken.Expired = expired
+
+	l.DB.Create(&accessToken)
 	c.JSON(200, gin.H{
-		"data":  user,
-		"token": signedToken,
+		"data":   user,
+		"token":  signedToken,
+		"access": accessToken,
 	})
 
 }

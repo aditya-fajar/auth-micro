@@ -1,7 +1,7 @@
 package model
 
 type User struct {
-	ID       uint64 `json:"id" gorm:"primary_key"`
+	ID       uint64 `json:"id" gorm:"primary_key;auto_increment"`
 	Name     string `json:"name" gorm:"column:name"`
 	Email    string `json:"email" gorm:"column:email"`
 	Password string `json:"password"   gorm:"column:password"`

@@ -10,11 +10,11 @@ type User struct {
 	DB *gorm.DB
 }
 
-type user struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+// type user struct {
+// 	Name     string `json:"name"`
+// 	Email    string `json:"email"`
+// 	Password string `json:"password"`
+// }
 
 // func New(db *gorm.DB) User {
 // 	return User{DB: db}
@@ -23,6 +23,7 @@ type user struct {
 func (u *User) Register(c *gin.Context) {
 	var request model.User
 
+	//ShouldBind akan men decode data dari json ke struct
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -33,6 +34,6 @@ func (u *User) Register(c *gin.Context) {
 	u.DB.Create(&request)
 	// fmt.Println(request)
 	c.JSON(200, gin.H{
-		"message": request,
+		"data": request,
 	})
 }
