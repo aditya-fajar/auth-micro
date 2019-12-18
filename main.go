@@ -2,8 +2,9 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pfpmaniac123/auth-micro/auth"
 	"github.com/pfpmaniac123/auth-micro/config"
+	"github.com/pfpmaniac123/auth-micro/modify"
+	"github.com/pfpmaniac123/auth-micro/auth"
 )
 
 func main() {
@@ -11,6 +12,8 @@ func main() {
 	db := config.DBInit()
 	login := auth.New(db)
 	register := auth.User{DB: db}
+	//login := auth.New(db)
+	update := modify.User{DB: db}
 	//product := product.Product{DB: db}
 
 	//r.GET("/products", product.GetProducts)
@@ -19,14 +22,11 @@ func main() {
 	//r.GET("/test", func)
 	//Menu Login (AgungW)
 	r.POST("/login", login.LoginUser)
+	//r.POST("/login", login.LoginUser)
 
 	r.POST("/register", register.Register)
 
-	r.PATCH("/update", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Update",
-		})
-	})
+	r.PATCH("/update", update.GetUsers)
 
 	r.Run()
 }

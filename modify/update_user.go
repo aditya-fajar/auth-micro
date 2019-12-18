@@ -10,6 +10,8 @@ type User struct {
 	DB *gorm.DB
 }
 
+//Test
+
 type user struct {
 	Id       int32  `json:"id"`
 	Name     string `json:"name"`
